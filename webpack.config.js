@@ -3,8 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    head: './src/head.js', 
-    index: './src/index.js', 
     a: './src/a/index.js', 
     b: './src/b/index.js'
   },
@@ -12,20 +10,25 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
+  module:{
+    rules: [
+      { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'page a',
       inject: true,
       template: 'public/index.html',
       filename: 'page-a.html',
-      chunks: ['head', 'index', 'a']
+      chunks: ['a']
     }),
     new HtmlWebpackPlugin({
       title: 'page b',
       inject: true,
       template: 'public/index.html',
       filename: 'page-b.html',
-      chunks: ['head', 'index', 'b']
+      chunks: ['b']
     }),
   ]
 };
