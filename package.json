@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "html-webpack-plugin": "webpack-contrib/html-webpack-plugin",
     "lodash": "^4.17.5",
     "webpack": "^4.0.0"
   },
@@ -13,7 +14,7 @@
   },
   "scripts": {
     "dev": "webpack --mode development",
-    "build": "webpack --mode production",    
+    "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
