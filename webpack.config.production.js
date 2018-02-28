@@ -1,37 +1,41 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const packageJSON = require('./package.json');
 
 module.exports = {
-  // set mode for 'development'
-  mode: 'development',
+  // set mode for 'production'
+  mode: 'production',
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
   entry: {
-    hot: require.resolve('react-dev-utils/webpackHotDevClient'),
     a: './src/a/index.js',
     b: './src/b/index.js'
   },
   output: {
-    filename: 'latest/js/[name].js',
+    filename: `${packageJSON.version}/js/[name].[chunkhash:8].js`,
     path: path.resolve(__dirname, '_output')
+  },
+  optimization: {
+      splitChunks: {
+        minSize: 0,
+        chunks: 'all'
+      },
+      runtimeChunk: true
   },
   module:{
     rules: [
       { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" },
       {
         test: /\.css$/,
-        loaders:[
-          "style-loader",
-          "css-loader"
-        ]
+        use: ExtractTextPlugin.extract({
+            fallback: "style-loader",
+            use: "css-loader"
+        })
       }
     ]
-  },
-  devServer: {
-    contentBase: './_output',
-    hot: true
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -39,17 +43,24 @@ module.exports = {
       inject: true,
       template: 'public/index.html',
       filename: 'page-a.html',
-      chunks: ['hot', 'a']
+      excludeChunks: ['b', 'runtime~b'],
+      minify: {
+        removeComments: true,
+        removeScriptTypeAttributes: true,
+      }
     }),
     new HtmlWebpackPlugin({
       title: 'page b',
       inject: true,
       template: 'public/index.html',
       filename: 'page-b.html',
-      chunks: ['hot', 'b']
+      excludeChunks: ['a', 'runtime~a', 'vendors~a'],
+      minify: {
+        removeComments: true,
+        removeScriptTypeAttributes: true,
+      }
     }),
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new ExtractTextPlugin(`${packageJSON.version}/css/[name].[contenthash:8].css`),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -59,11 +70,5 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty',
-  },
-  // Turn off performance hints during development because we don't do any
-  // splitting or minification in interest of speed. These warnings become
-  // cumbersome.
-  performance: {
-    hints: false,
   },
 };
