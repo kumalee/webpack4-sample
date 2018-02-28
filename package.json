@@ -16,13 +16,15 @@
     "css-loader": "^0.28.10",
     "extract-text-webpack-plugin": "4.0.0-alpha.0",
     "html-webpack-plugin": "webpack-contrib/html-webpack-plugin",
+    "react-dev-utils": "^5.0.0",
     "style-loader": "^0.20.2",
     "webpack": "^4.0.0",
-    "webpack-cli": "^2.0.9"
+    "webpack-cli": "^2.0.9",
+    "webpack-dev-server": "^3.1.0"
   },
   "scripts": {
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
+    "start": "webpack-dev-server --host 0.0.0.0 --open-page page-a.html",
+    "build": "webpack --config webpack.config.production.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
